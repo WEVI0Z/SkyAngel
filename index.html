@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <link rel="stylesheet" href="css/style.css">
+    <title>SkyAngel</title>
 </head>
 <body>
     <section class="game">
@@ -15,22 +16,45 @@
             <div class="main-menu__instructions">
                 <h4 class="instructions__header">Инструкции к игре</h4>
                 <ul class="instructions__list">
-                    <li class="instruciton__item">...</li>
+                    <li class="instruciton__item">Нажимайте WASD, чтобы управлять самолетом</li>
+                    <li class="instruciton__item">Избегайте птиц, чтобы не разбиться</li>
+                    <li class="instruciton__item">Собирайте парашюты, чтобы пополнить топливо</li>
+                    <li class="instruciton__item">Собирайте звезды, чтобы ставить рекорды</li>
                 </ul>
             </div>
         </div>
         <div class="gaming-environment">
-            <img class="environment__logo" src="img\logo\sky2.png" alt="Логотип игры">
-            <ul class="environment__stats-list">
-                <li class="stats__item">Таймер</li>
-                <li class="stats__item">Топливо</li>
-                <li class="stats__item">Звезды</li>
-            </ul>
-            <ul class="environment__options-list">
-                <li class="options__item">Пауза/возобновить</li>
-                <li class="options__item">Управление звуком</li>
-                <li class="options__item">Управление шрифтом</li>
-            </ul>
+            <div class="environment__menu">
+                <a href="#" class="menu__logo" aria-label="SkyAngel"></a>
+                <ul class="menu__stats-list">
+                    <li class="stats__item timer">00:00</li>
+                    <li class="stats__item fuel">99</li>
+                    <li class="stats__item stars">0</li>
+                </ul>
+                <ul class="menu__options-list">
+                    <li class="options__item">
+                        <p class="options__description">Пауза</p>
+                        <button class="options__button pause__button" aria-label="Пауза/возобновить"></button>
+                    </li>
+                    <li class="options__item">
+                        <p class="options__description">Звук</p>
+                        <button class="options__button sound__button" aria-label="Включить/выключить звук"></button>
+                    </li>
+                    <li class="options__item">
+                        <p class="options__description">Шрифт</p>
+                        <ul class="options__sound-control">
+                            <li class="sound-control__item">
+                                <button class="sound-control__button encrease-sound-button" aria-label="Увеличить шрифт"></button>
+                            </li>
+                            <li class="sound-control__item">
+                                <button class="sound-control__button decrease-sound-button" aria-label="Уменьшить шрифт"></button>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            <div class="environment__playground">
+            </div>
         </div>
     </section>
     <section class="finish-popup" hidden>
