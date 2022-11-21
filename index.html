@@ -13,15 +13,42 @@
                 Начать игру
             </button>
             <div class="main-menu__instructions">
-                <h2 class="instructions__header">Инструкции к игре</h2>
+                <h4 class="instructions__header">Инструкции к игре</h4>
                 <ul class="instructions__list">
                     <li class="instruciton__item">...</li>
                 </ul>
             </div>
         </div>
         <div class="gaming-environment">
-            <img src="img\logo\sky2.png" alt="Логотип игры">
+            <img class="environment__logo" src="img\logo\sky2.png" alt="Логотип игры">
+            <ul class="environment__stats-list">
+                <li class="stats__item">Таймер</li>
+                <li class="stats__item">Топливо</li>
+                <li class="stats__item">Звезды</li>
+            </ul>
+            <ul class="environment__options-list">
+                <li class="options__item">Пауза/возобновить</li>
+                <li class="options__item">Управление звуком</li>
+                <li class="options__item">Управление шрифтом</li>
+            </ul>
         </div>
+    </section>
+    <section class="finish-popup" hidden>
+        <h2>Игра окончена</h2>
+        <div class="finish__results">
+            <ul class="results__list">
+                <li class="results__item">Количество звезд: 21</li>
+                <li class="results__item">Время: 21</li>
+            </ul>
+        </div>
+        <div class="previous__results">
+            <h3>Предыдущая игра</h3>
+            <ul class="results__list">
+                <li class="results__item">Количество звезд: 21</li>
+                <li class="results__item">Время: 21</li>
+            </ul>
+        </div>
+        <button class="finish__button">Начать заново</button>
     </section>
 </body>
 </html>
