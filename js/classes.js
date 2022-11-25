@@ -54,11 +54,20 @@ class Plane extends Entity{
         };
     }
 
+    checkBorders(leftBorder = 0, rightBorder = canvas.width, topBorder = 0, bottomBorder = canvas.height) {
+        if(this.position.x <= leftBorder) {
+            this.velocity.x = 1;
+        } else if(this.position.x + this.width >= rightBorder) {
+            this.velocity.x = -1;
+        } else if(this.position.y <= topBorder) {
+            this.velocity.y = 1;
+        } else if(this.position.y + this.height >= bottomBorder) {
+            this.velocity.y = -1;
+        }
+    }
+
     update() {
         this.draw();
-
-        this.position.x += this.velocity.x;
-        this.position.y += this.velocity.y;
 
         if(KEYS.d.pressed && this.velocity.x <= 5) {
             this.velocity.x += 1;
@@ -79,6 +88,111 @@ class Plane extends Entity{
             this.velocity.y -= 1;
         } else if(this.velocity.y < 0) {
             this.velocity.y += 1;
+        }
+
+        this.checkBorders();
+
+        this.position.x += this.velocity.x;
+        this.position.y += this.velocity.y;
+    }
+}
+
+class Cloud extends Entity {
+    constructor({scale = 1}) {
+        const cloudURL = CLOUDS_IMG_URLS[getRandomIndex(CLOUDS_IMG_URLS)];
+
+        const x = canvas.width / tilesMap.cols * getRandomIndex(tilesMap.tiles[0]);
+        const y = canvas.height / tilesMap.rows * getRandomIndex(tilesMap.tiles);
+        
+
+        super({position: {
+            x,
+            y
+        }, imageSrc: cloudURL, scale});
+
+        this.speed = -1;
+    }
+
+    getRandomPosition() {
+        this.position = {
+            x: canvas.width / tilesMap.cols * getRandomIndex(tilesMap.tiles[0]) + canvas.width,
+            y: canvas.height / tilesMap.rows * getRandomIndex(tilesMap.tiles)
+        }
+    }
+
+    checkBorders(leftBorder = 0) {
+        if(this.position.x <= leftBorder - this.width) {
+            this.spawnCloud();
+        }
+    }
+
+    spawnCloud() {
+        this.getRandomPosition();
+        for (let i = 0; i < tilesMap.rows; i++) {
+            for (let j = 0; j < tilesMap.cols; j++) {
+                if(this.tileCollision(i, j) && tilesMap.tiles[i][j] == 1) {
+                    this.spawnCloud();
+                }
+            }
+        }
+    }
+
+    tileCollision(i, j) {
+        const x = canvas.width / tilesMap.cols * getRandomIndex(tilesMap.tiles[i]);
+        const y = canvas.height / tilesMap.rows * getRandomIndex(tilesMap.tiles);
+
+        return (
+            this.position.x < x + tilesMap.width + canvas.width &&
+            this.position.x + this.width > x + canvas.width &&
+            this.position.y > y - tilesMap.height &&
+            this.position.y - this.height < y
+        );
+    }
+
+    updateCloudPositions() {
+        for (let i = 0; i < tilesMap.rows; i++) {
+            for (let j = 0; j < tilesMap.cols; j++) {
+                if(this.tileCollision(i, j)) {
+                    tilesMap.tiles[i][j] = 1;
+                    console.log(tilesMap);
+                }
+            }
+        }
+    }
+
+    update() {
+        this.draw();
+        this.checkBorders();
+        this.updateCloudPositions();
+
+        this.position.x += this.speed;
+    }
+}
+
+class TilesMap {
+    constructor(width, height, rows, cols) {
+        this.height = height / rows,
+        this.width = width / cols,
+
+        this.rows = rows,
+        this.cols = cols,
+        
+        this.tiles = []
+
+        for (let i = 0; i < rows; i++) {
+            const temp = [];
+            for (let j = 0; j < cols; j++) {
+                temp.push(0);
+            }
+            this.tiles.push(temp);
+        }
+    }
+
+    update() {
+        for (let i = 0; i < this.rows; i++) {
+            for (let j = 0; j < this.cols; j++) {
+                this.tiles[i][j] = 0;
+            }
         }
     }
 }
