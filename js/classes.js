@@ -69,22 +69,22 @@ class Plane extends Entity{
     update() {
         this.draw();
 
-        if(KEYS.d.pressed && this.velocity.x <= 5) {
+        if(KEYS.d.pressed && this.velocity.x <= 10) {
             this.velocity.x += 1;
         } else if(this.velocity.x > 0) {
             this.velocity.x -= 1;
         }
-        if(KEYS.a.pressed && this.velocity.x >= -5) {
+        if(KEYS.a.pressed && this.velocity.x >= -10) {
             this.velocity.x -= 1;
         } else if(this.velocity.x < 0) {
             this.velocity.x += 1;
         }
-        if(KEYS.s.pressed && this.velocity.y <= 5) {
+        if(KEYS.s.pressed && this.velocity.y <= 10) {
             this.velocity.y += 1;
         } else if(this.velocity.y > 0) {
             this.velocity.y -= 1;
         }
-        if(KEYS.w.pressed && this.velocity.y >= -5) {
+        if(KEYS.w.pressed && this.velocity.y >= -10) {
             this.velocity.y -= 1;
         } else if(this.velocity.y < 0) {
             this.velocity.y += 1;
@@ -103,14 +103,13 @@ class Cloud extends Entity {
 
         const x = canvas.width / tilesMap.cols * getRandomIndex(tilesMap.tiles[0]);
         const y = canvas.height / tilesMap.rows * getRandomIndex(tilesMap.tiles);
-        
-
+    
         super({position: {
             x,
             y
         }, imageSrc: cloudURL, scale});
 
-        this.speed = -1;
+        this.speed = -2;
     }
 
     getRandomPosition() {
@@ -142,10 +141,10 @@ class Cloud extends Entity {
         const y = canvas.height / tilesMap.rows * getRandomIndex(tilesMap.tiles);
 
         return (
-            this.position.x < x + tilesMap.width + canvas.width &&
-            this.position.x + this.width > x + canvas.width &&
-            this.position.y > y - tilesMap.height &&
-            this.position.y - this.height < y
+            this.position.x <= x + tilesMap.width + canvas.width &&
+            this.position.x + this.width >= x + canvas.width &&
+            this.position.y >= y - tilesMap.height &&
+            this.position.y - this.height <= y
         );
     }
 
@@ -154,7 +153,7 @@ class Cloud extends Entity {
             for (let j = 0; j < tilesMap.cols; j++) {
                 if(this.tileCollision(i, j)) {
                     tilesMap.tiles[i][j] = 1;
-                    console.log(tilesMap);
+                    // console.log(canvas.width, canvas.height);
                 }
             }
         }

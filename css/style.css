@@ -305,7 +305,8 @@ body {
 
 .environment__playground {
     flex-grow: 1;
-    width: 100%;
+    width: 1022px;
+    height: 614px;
     position: relative;
     
     background-color:aqua;

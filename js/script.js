@@ -35,6 +35,9 @@ function getRandomNumber(min, max) {
 const canvas = document.querySelector("canvas");
 const c = canvas.getContext("2d");
 
+canvas.width = 1022
+canvas.height = 614;
+
 function getMapTiles(width, height, rows, cols) {
     const tilesMap = {
         tileHeight: height / rows,
@@ -67,7 +70,7 @@ const plane = new Plane(
             y: 0
         },
         imageSrc: PLANE_IMG_URL,
-        scale: 0.15
+        scale: 0.5
     }
 );
 
@@ -76,7 +79,7 @@ const clouds = [];
 for (let i = 0; i < CLOUDS_AMOUNT; i++) {
     clouds.push(new Cloud(
         {
-            scale: 0.7
+            scale: 3
         }
     ));
 }
