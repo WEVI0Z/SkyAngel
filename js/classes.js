@@ -1,5 +1,5 @@
 class Entity {
-    constructor({position, imageSrc, scale = 1, framerate = 1, frameBuffer = 3}) {
+    constructor({position, imageSrc, scale = 1, framerate = 1, frameBuffer = 6}) {
         this.position = position;
         this.image = new Image();
         this.image.src = imageSrc;
@@ -43,15 +43,33 @@ class Entity {
     update() {
         this.draw();
     }
+
+    updateFrames() {
+        this.elapsedFrames++;
+        if(this.elapsedFrames % this.frameBuffer === 0){
+            if(this.currentFrame < this.framerate - 1) {
+                this.currentFrame++;
+            } else {
+                this.currentFrame = 0;
+            }
+        }
+    }
 }
 
 class Plane extends Entity{
     constructor({position, imageSrc, scale = 1}) {
+        position = {
+            x: canvas.width / 2,
+            y: canvas.height / 2
+        }
+
         super({position, imageSrc, scale});
         this.velocity = {
             x: 0,
             y: 0
         };
+
+        this.blown = false;
     }
 
     checkBorders(leftBorder = 0, rightBorder = canvas.width, topBorder = 0, bottomBorder = canvas.height) {
@@ -68,37 +86,54 @@ class Plane extends Entity{
 
     update() {
         this.draw();
+        if(!this.blown) {
+            if(KEYS.d.pressed && this.velocity.x <= 10) {
+                this.velocity.x += 1;
+            } else if(this.velocity.x > 0) {
+                this.velocity.x -= 1;
+            }
+            if(KEYS.a.pressed && this.velocity.x >= -10) {
+                this.velocity.x -= 1;
+            } else if(this.velocity.x < 0) {
+                this.velocity.x += 1;
+            }
+            if(KEYS.s.pressed && this.velocity.y <= 10) {
+                this.velocity.y += 1;
+            } else if(this.velocity.y > 0) {
+                this.velocity.y -= 1;
+            }
+            if(KEYS.w.pressed && this.velocity.y >= -10) {
+                this.velocity.y -= 1;
+            } else if(this.velocity.y < 0) {
+                this.velocity.y += 1;
+            }
+    
+            this.checkBorders();
+    
+            this.position.x += this.velocity.x;
+            this.position.y += this.velocity.y;
+        } else {
+            this.updateFrames();
+        }
+    }
 
-        if(KEYS.d.pressed && this.velocity.x <= 10) {
-            this.velocity.x += 1;
-        } else if(this.velocity.x > 0) {
-            this.velocity.x -= 1;
-        }
-        if(KEYS.a.pressed && this.velocity.x >= -10) {
-            this.velocity.x -= 1;
-        } else if(this.velocity.x < 0) {
-            this.velocity.x += 1;
-        }
-        if(KEYS.s.pressed && this.velocity.y <= 10) {
-            this.velocity.y += 1;
-        } else if(this.velocity.y > 0) {
-            this.velocity.y -= 1;
-        }
-        if(KEYS.w.pressed && this.velocity.y >= -10) {
-            this.velocity.y -= 1;
-        } else if(this.velocity.y < 0) {
-            this.velocity.y += 1;
+    destroyPlane() {
+        this.image = new Image();
+        this.image.src = EXPLOAD_IMG;
+        // this.framerate = 11;
+        // this.frameBuffer = 10;
+        this.image.onload = () => {
+            this.width = (this.image.width / this.framerate) * this.scale;
+            this.height = this.image.height * this.scale;
         }
 
-        this.checkBorders();
-
-        this.position.x += this.velocity.x;
-        this.position.y += this.velocity.y;
+        console.log(this.image);
+        // this.blown = true;
     }
 }
 
 class Cloud extends Entity {
-    constructor({scale = 1}) {
+    constructor() {
         const cloudURL = CLOUDS_IMG_URLS[getRandomIndex(CLOUDS_IMG_URLS)];
 
         const x = canvas.width / tilesMap.cols * getRandomIndex(tilesMap.tiles[0]);
@@ -107,9 +142,9 @@ class Cloud extends Entity {
         super({position: {
             x,
             y
-        }, imageSrc: cloudURL, scale});
+        }, imageSrc: cloudURL, scale: getRandomNumber(1, 6)});
 
-        this.speed = -2;
+        this.speed = getRandomNumber(-3, -1);
     }
 
     getRandomPosition() {
@@ -121,7 +156,9 @@ class Cloud extends Entity {
 
     checkBorders(leftBorder = 0) {
         if(this.position.x <= leftBorder - this.width) {
-            this.spawnCloud();
+            this.getRandomPosition();
+            this.speed = getRandomNumber(-3, -1);
+            this.scale = getRandomNumber(1, 6);
         }
     }
 
@@ -129,7 +166,10 @@ class Cloud extends Entity {
         this.getRandomPosition();
         for (let i = 0; i < tilesMap.rows; i++) {
             for (let j = 0; j < tilesMap.cols; j++) {
-                if(this.tileCollision(i, j) && tilesMap.tiles[i][j] == 1) {
+                if(tilesMap.tiles[i][j] == 2) {
+                    continue;
+                }else if(this.tileCollision(i, j) && tilesMap.tiles[i][j] == 1) {
+                    tilesMap.tiles[i][j] == 2;
                     this.spawnCloud();
                 }
             }
@@ -137,8 +177,8 @@ class Cloud extends Entity {
     }
 
     tileCollision(i, j) {
-        const x = canvas.width / tilesMap.cols * getRandomIndex(tilesMap.tiles[i]);
-        const y = canvas.height / tilesMap.rows * getRandomIndex(tilesMap.tiles);
+        const x = canvas.width / tilesMap.cols * j;
+        const y = canvas.height / tilesMap.rows * i;
 
         return (
             this.position.x <= x + tilesMap.width + canvas.width &&
@@ -193,5 +233,62 @@ class TilesMap {
                 this.tiles[i][j] = 0;
             }
         }
+    }
+}
+
+class Bird extends Entity{
+    constructor() {
+        const birdsURL = BIRDS_IMG;
+
+        const x = canvas.width / tilesMap.cols * getRandomIndex(tilesMap.tiles[0]);
+        const y = 0;
+    
+        super({position: {
+            x,
+            y
+        }, imageSrc: birdsURL, framerate: 4, scale: 2});
+
+        this.xSpeed = getRandomNumber(-4, -2);
+        this.ySpeed = getRandomNumber(2, 4);
+    }
+
+    update() {
+        this.draw();
+        this.updateFrames();
+        this.checkBorders();
+        console.log(this.planeCollision());
+
+        if(this.planeCollision()) {
+            plane.destroyPlane();
+        }
+
+        this.position.x += this.xSpeed;
+        this.position.y += this.ySpeed;
+    }
+
+    getRandomPosition() {
+        this.position.x = canvas.width / tilesMap.cols * getRandomIndex(tilesMap.tiles[0]) + tilesMap.width;
+        this.position.y = -this.height;        
+    }
+
+    checkBorders(bottomBorder = canvas.height) {
+        if(this.position.y >= bottomBorder + this.height) {
+            this.getRandomPosition();
+            this.xSpeed = getRandomNumber(-4, -2);
+            this.ySpeed = getRandomNumber(2, 4);
+        }
+    }
+
+    
+    planeCollision() {
+        const x = plane.position.x;
+        const y = plane.position.y;
+
+        return (
+            this.position.x <= x + plane.width &&
+            this.position.x + this.width >= x &&
+            this.position.y >= y - plane.height &&
+            this.position.y - this.height <= y
+        );
     }
 }

@@ -6,6 +6,8 @@ const CLOUDS_IMG_URLS = [
     "../img/cloud2.png",
     "../img/cloud3.png"
 ];
+const BIRDS_IMG = "../img/birds.png";
+const EXPLOAD_IMG = "../img/expload.png";
 
 const KEYS = {
     w: {
@@ -23,6 +25,7 @@ const KEYS = {
 }
 
 const CLOUDS_AMOUNT = 4;
+const BIRDS_AMOUNT = 4;
 
 function getRandomIndex(arr) {
   return Math.floor(Math.random() * arr.length);
@@ -77,11 +80,13 @@ const plane = new Plane(
 const clouds = [];
 
 for (let i = 0; i < CLOUDS_AMOUNT; i++) {
-    clouds.push(new Cloud(
-        {
-            scale: 3
-        }
-    ));
+    clouds.push(new Cloud());
+}
+
+const birds = [];
+
+for (let i = 0; i < BIRDS_AMOUNT; i++) {
+    birds.push(new Bird());
 }
 
 function contolKeys() {
@@ -137,6 +142,10 @@ function animate() {
             c.fillRect(x, y, 10, 10);
         }
     }
+
+    birds.forEach(bird => {
+        bird.update();
+    });
 }
 
 animate();
