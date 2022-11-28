@@ -94,49 +94,32 @@ class Plane extends Entity{
     }
 
     update() {
-        this.draw();
-        if(!this.blown) {
-            if(KEYS.d.pressed && this.velocity.x <= 10) {
-                this.velocity.x += 1;
-            } else if(this.velocity.x > 0) {
-                this.velocity.x -= 1;
-            }
-            if(KEYS.a.pressed && this.velocity.x >= -10) {
-                this.velocity.x -= 1;
-            } else if(this.velocity.x < 0) {
-                this.velocity.x += 1;
-            }
-            if(KEYS.s.pressed && this.velocity.y <= 10) {
-                this.velocity.y += 1;
-            } else if(this.velocity.y > 0) {
-                this.velocity.y -= 1;
-            }
-            if(KEYS.w.pressed && this.velocity.y >= -10) {
-                this.velocity.y -= 1;
-            } else if(this.velocity.y < 0) {
-                this.velocity.y += 1;
-            }
-    
-            this.checkBorders();
-    
-            this.position.x += this.velocity.x;
-            this.position.y += this.velocity.y;
-        } else {
-            this.updateFrames();
+    this.draw();
+        if(KEYS.d.pressed && this.velocity.x <= 10) {
+            this.velocity.x += 1;
+        } else if(this.velocity.x > 0) {
+            this.velocity.x -= 1;
         }
-    }
+        if(KEYS.a.pressed && this.velocity.x >= -10) {
+            this.velocity.x -= 1;
+        } else if(this.velocity.x < 0) {
+            this.velocity.x += 1;
+        }
+        if(KEYS.s.pressed && this.velocity.y <= 10) {
+            this.velocity.y += 1;
+        } else if(this.velocity.y > 0) {
+            this.velocity.y -= 1;
+        }
+        if(KEYS.w.pressed && this.velocity.y >= -10) {
+            this.velocity.y -= 1;
+        } else if(this.velocity.y < 0) {
+            this.velocity.y += 1;
+        }
 
-    destroyPlane() {
-        this.image = new Image();
-        this.image.src = EXPLOAD_IMG;
-        // this.framerate = 11;
-        // this.frameBuffer = 10;
-        this.image.onload = () => {
-            this.width = (this.image.width / this.framerate) * this.scale;
-            this.height = this.image.height * this.scale;
-        }
-        
-        // this.blown = true;
+        this.checkBorders();
+
+        this.position.x += this.velocity.x;
+        this.position.y += this.velocity.y;
     }
 }
 
@@ -220,7 +203,7 @@ class Bird extends Entity{
         this.checkBorders();
 
         if(this.planeCollision()) {
-            plane.destroyPlane();
+            gameOver = true;
         }
 
         this.position.x += this.xSpeed;
@@ -252,7 +235,8 @@ class Star extends Entity{
             x,
             y
         }, imageSrc: starURL, scale: 2});
-
+        
+        this.starsCounter = 0;
         this.ySpeed = getRandomNumber(2, 4);
     }
 
@@ -264,6 +248,8 @@ class Star extends Entity{
         if(this.planeCollision()) {
             this.getRandomPosition();
             this.ySpeed = getRandomNumber(2, 4);
+
+            this.starsCounter++;
         }
 
         this.position.y += this.ySpeed;
@@ -271,7 +257,7 @@ class Star extends Entity{
 
     getRandomPosition() {
         this.position.x = canvas.width / tilesMap.cols * getRandomIndex(tilesMap.tiles[0]) + tilesMap.width;
-        this.position.y = -this.height;
+        this.position.y = -canvas.height;
     }
 
     checkBorders(bottomBorder = canvas.height) {
@@ -287,7 +273,7 @@ class DropOff extends Entity{
         const dropOffURL = DROP_OFF_URL;
 
         const x = canvas.width / tilesMap.cols * getRandomIndex(tilesMap.tiles[0]);
-        const y = 0;
+        const y = -canvas.height;
     
         super({position: {
             x,
@@ -295,6 +281,13 @@ class DropOff extends Entity{
         }, imageSrc: dropOffURL, scale: 3});
 
         this.ySpeed = getRandomNumber(2, 4);
+        this.fuelCounter = DEFAULT_FUEL;
+
+        setInterval(() => {
+            if(!gamePause) {
+                this.fuelCounter--;
+            }
+        }, 1000)
     }
 
     update() {
@@ -305,6 +298,11 @@ class DropOff extends Entity{
         if(this.planeCollision()) {
             this.getRandomPosition();
             this.ySpeed = getRandomNumber(2, 4);
+            this.fuelCounter += 10;
+        }
+        
+        if(this.fuelCounter <= 0) {
+            gameOver = true;
         }
 
         this.position.y += this.ySpeed;
@@ -312,7 +310,7 @@ class DropOff extends Entity{
 
     getRandomPosition() {
         this.position.x = canvas.width / tilesMap.cols * getRandomIndex(tilesMap.tiles[0]) + tilesMap.width;
-        this.position.y = -this.height;
+        this.position.y = -canvas.height;
     }
 
     checkBorders(bottomBorder = canvas.height) {
