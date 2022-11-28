@@ -44,6 +44,15 @@ class Entity {
         this.draw();
     }
 
+    planeCollision() {
+        return (
+            this.position.x <= plane.position.x + plane.width &&
+            this.position.x + this.width >= plane.position.x &&
+            this.position.y >= plane.position.y - this.height &&
+            this.position.y - this.height <= plane.position.y
+        );
+    }
+
     updateFrames() {
         this.elapsedFrames++;
         if(this.elapsedFrames % this.frameBuffer === 0){
@@ -126,8 +135,7 @@ class Plane extends Entity{
             this.width = (this.image.width / this.framerate) * this.scale;
             this.height = this.image.height * this.scale;
         }
-
-        console.log(this.image);
+        
         // this.blown = true;
     }
 }
@@ -162,47 +170,9 @@ class Cloud extends Entity {
         }
     }
 
-    spawnCloud() {
-        this.getRandomPosition();
-        for (let i = 0; i < tilesMap.rows; i++) {
-            for (let j = 0; j < tilesMap.cols; j++) {
-                if(tilesMap.tiles[i][j] == 2) {
-                    continue;
-                }else if(this.tileCollision(i, j) && tilesMap.tiles[i][j] == 1) {
-                    tilesMap.tiles[i][j] == 2;
-                    this.spawnCloud();
-                }
-            }
-        }
-    }
-
-    tileCollision(i, j) {
-        const x = canvas.width / tilesMap.cols * j;
-        const y = canvas.height / tilesMap.rows * i;
-
-        return (
-            this.position.x <= x + tilesMap.width + canvas.width &&
-            this.position.x + this.width >= x + canvas.width &&
-            this.position.y >= y - tilesMap.height &&
-            this.position.y - this.height <= y
-        );
-    }
-
-    updateCloudPositions() {
-        for (let i = 0; i < tilesMap.rows; i++) {
-            for (let j = 0; j < tilesMap.cols; j++) {
-                if(this.tileCollision(i, j)) {
-                    tilesMap.tiles[i][j] = 1;
-                    // console.log(canvas.width, canvas.height);
-                }
-            }
-        }
-    }
-
     update() {
         this.draw();
         this.checkBorders();
-        this.updateCloudPositions();
 
         this.position.x += this.speed;
     }
@@ -224,14 +194,6 @@ class TilesMap {
                 temp.push(0);
             }
             this.tiles.push(temp);
-        }
-    }
-
-    update() {
-        for (let i = 0; i < this.rows; i++) {
-            for (let j = 0; j < this.cols; j++) {
-                this.tiles[i][j] = 0;
-            }
         }
     }
 }
@@ -256,7 +218,6 @@ class Bird extends Entity{
         this.draw();
         this.updateFrames();
         this.checkBorders();
-        console.log(this.planeCollision());
 
         if(this.planeCollision()) {
             plane.destroyPlane();
@@ -278,17 +239,86 @@ class Bird extends Entity{
             this.ySpeed = getRandomNumber(2, 4);
         }
     }
+}
 
+class Star extends Entity{
+    constructor() {
+        const starURL = STAR_URL;
+
+        const x = canvas.width / tilesMap.cols * getRandomIndex(tilesMap.tiles[0]);
+        const y = 0;
     
-    planeCollision() {
-        const x = plane.position.x;
-        const y = plane.position.y;
+        super({position: {
+            x,
+            y
+        }, imageSrc: starURL, scale: 2});
 
-        return (
-            this.position.x <= x + plane.width &&
-            this.position.x + this.width >= x &&
-            this.position.y >= y - plane.height &&
-            this.position.y - this.height <= y
-        );
+        this.ySpeed = getRandomNumber(2, 4);
+    }
+
+    update() {
+        this.draw();
+        this.updateFrames();
+        this.checkBorders();
+
+        if(this.planeCollision()) {
+            this.getRandomPosition();
+            this.ySpeed = getRandomNumber(2, 4);
+        }
+
+        this.position.y += this.ySpeed;
+    }
+
+    getRandomPosition() {
+        this.position.x = canvas.width / tilesMap.cols * getRandomIndex(tilesMap.tiles[0]) + tilesMap.width;
+        this.position.y = -this.height;
+    }
+
+    checkBorders(bottomBorder = canvas.height) {
+        if(this.position.y >= bottomBorder + this.height) {
+            this.getRandomPosition();
+            this.ySpeed = getRandomNumber(2, 4);
+        }
+    }
+}
+
+class DropOff extends Entity{
+    constructor() {
+        const dropOffURL = DROP_OFF_URL;
+
+        const x = canvas.width / tilesMap.cols * getRandomIndex(tilesMap.tiles[0]);
+        const y = 0;
+    
+        super({position: {
+            x,
+            y
+        }, imageSrc: dropOffURL, scale: 3});
+
+        this.ySpeed = getRandomNumber(2, 4);
+    }
+
+    update() {
+        this.draw();
+        this.updateFrames();
+        this.checkBorders();
+
+        if(this.planeCollision()) {
+            this.getRandomPosition();
+            this.ySpeed = getRandomNumber(2, 4);
+        }
+
+        this.position.y += this.ySpeed;
+    }
+
+    getRandomPosition() {
+        this.position.x = canvas.width / tilesMap.cols * getRandomIndex(tilesMap.tiles[0]) + tilesMap.width;
+        this.position.y = -this.height;
+    }
+
+    checkBorders(bottomBorder = canvas.height) {
+        if(this.position.y >= bottomBorder + this.height) {
+            this.getRandomPosition();
+            this.ySpeed = getRandomNumber(2, 4);
+        }
     }
 }
