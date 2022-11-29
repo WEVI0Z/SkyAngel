@@ -74,7 +74,6 @@ optionsWrapper.style.fontSize = fontSize + "px";
 
 const backgroundSound = new Audio();
 backgroundSound.src = BACKGROUND_SND_URL;
-backgroundSound.autoplay = true;
 
 backgroundSound.addEventListener("ended", (event) => {
     backgroundSound.play();
@@ -125,6 +124,7 @@ function mainMenuControl() {
     const gameWrapper = document.querySelector(".gaming-environment");
 
     function startButtonClickHandler() {
+        backgroundSound.play();
         startGame();
         gameWrapper.classList.remove("hidden");
         mainMenuWrapper.classList.add("hidden");
