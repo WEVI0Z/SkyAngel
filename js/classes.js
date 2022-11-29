@@ -204,6 +204,7 @@ class Bird extends Entity{
 
         if(this.planeCollision()) {
             gameOver = true;
+            hitSound.play()
         }
 
         this.position.x += this.xSpeed;
@@ -234,7 +235,7 @@ class Star extends Entity{
         super({position: {
             x,
             y
-        }, imageSrc: starURL, scale: 2});
+        }, imageSrc: starURL, scale: 2, framerate: 5, frameBuffer: 8});
         
         this.starsCounter = 0;
         this.ySpeed = getRandomNumber(2, 4);
@@ -250,6 +251,8 @@ class Star extends Entity{
             this.ySpeed = getRandomNumber(2, 4);
 
             this.starsCounter++;
+
+            starSound.play();
         }
 
         this.position.y += this.ySpeed;
@@ -278,7 +281,7 @@ class DropOff extends Entity{
         super({position: {
             x,
             y
-        }, imageSrc: dropOffURL, scale: 3});
+        }, imageSrc: dropOffURL, scale: 3, framerate: 8, frameBuffer: 4});
 
         this.ySpeed = getRandomNumber(2, 4);
         this.fuelCounter = DEFAULT_FUEL;

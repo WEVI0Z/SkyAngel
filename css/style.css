@@ -189,6 +189,16 @@ body {
     background-image: url(../img/pause-hover.png);
 }
 
+.options__button.play__button {
+    margin-left: 20px;
+    margin-top: 20px;
+    background-image: url(../img/play.png);
+}
+
+.options__button.play__button:hover {
+    background-image: url(../img/play-hover.png);
+}
+
 .options__button.sound__button {
     margin-left: 10px;
     margin-top: 20px;
@@ -290,7 +300,8 @@ body {
 .finish__button {
     border-radius: 0%;
     align-self: center;
-    width: 250px;
+    padding-left: 10px;
+    padding-right: 10px;
     min-height: 50px;
     margin-bottom: 20px;
 

@@ -9,7 +9,7 @@
 </head>
 <body>
     <section class="game">
-        <div class="main-menu hidden">
+        <div class="main-menu">
             <button class="main-menu__start-button">
                 Начать игру
             </button>
@@ -23,7 +23,7 @@
                 </ul>
             </div>
         </div>
-        <div class="gaming-environment">
+        <div class="gaming-environment hidden">
             <div class="environment__menu">
                 <a href="#" class="menu__logo" aria-label="SkyAngel"></a>
                 <ul class="menu__stats-list">
@@ -65,13 +65,12 @@
         <div class="previous__results hidden">
             <h3 class="previous__header">Предыдущая игра</h3>
             <ul class="previous__list">
-                <li class="previous__item">Количество звезд: 21</li>
-                <li class="previous__item">Время: 21</li>
+                <li class="previous__item" data-type="stars">Количество звезд: 21</li>
+                <li class="previous__item" data-type="time">Время: 21</li>
             </ul>
         </div>
         <button class="finish__button">Начать заново!</button>
     </section>
-
     <script src="js/classes.js"></script>
     <script src="js/script.js"></script>
 </body>
