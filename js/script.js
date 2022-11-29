@@ -89,6 +89,36 @@ hitSound.src = HIT_SND_URL;
 const starSound = new Audio();
 starSound.src = STAR_SND_URL;
 
+const pauseButton = document.querySelector(".options__button.pause__button");
+const muteButton = document.querySelector(".options__button.sound__button");
+const fontSizeUpButton = document.querySelector(".sound-control__button.encrease-sound-button");
+const fontSizeDownButton = document.querySelector(".sound-control__button.decrease-sound-button");
+
+function muteGame() {
+    backgroundSound.muted = !backgroundSound.muted;
+    finishSound.muted = !finishSound.muted
+    hitSound.muted = !hitSound.muted;
+    starSound.muted = !starSound.muted;
+}
+
+function encreaseFontSize() {
+    if(fontSize < 40) {
+        fontSize += 5;
+        optionsWrapper.style.fontSize = fontSize + "px";
+    }
+}
+
+function decreaseFontSize() {
+    if(fontSize > 20) {
+        fontSize -= 5;
+        optionsWrapper.style.fontSize = fontSize + "px";
+    }
+}
+
+muteButton.addEventListener("click", muteGame);
+fontSizeUpButton.addEventListener("click", encreaseFontSize);
+fontSizeDownButton.addEventListener("click", decreaseFontSize);
+
 function mainMenuControl() {
     const mainMenuWrapper = document.querySelector(".main-menu");
     const startButton = mainMenuWrapper.querySelector(".main-menu__start-button");
@@ -113,7 +143,6 @@ function showTheFinishPopUp(date, stars) {
     const previousResultsList = previousResultsWrapper.querySelectorAll(".previous__list .previous__item");
     const finishHeader = popup.querySelector(".finish__header");
     const previousHeader = popup.querySelector(".previous__header");
-
 
     const resultDate = createTheDate(date);
 
@@ -187,11 +216,6 @@ let gamePause;
 const fuelShowDown = document.querySelector(".stats__item.fuel");
 const starsShowDown = document.querySelector(".stats__item.stars");
 const timerShowDown = document.querySelector(".stats__item.timer");
-const pauseButton = document.querySelector(".options__button.pause__button");
-const pauseButtonHover = document.querySelector(".options__button.pause__button:hover");
-const muteButton = document.querySelector(".options__button.sound__button");
-const fontSizeUpButton = document.querySelector(".sound-control__button.encrease-sound-button");
-const fontSizeDownButton = document.querySelector(".sound-control__button.decrease-sound-button");
 
 function startGame() {
     gamePause = false;
@@ -267,35 +291,9 @@ function startGame() {
         }
     }
 
-    function muteGame() {
-        backgroundSound.muted = !backgroundSound.muted;
-        finishSound.muted = !finishSound.muted
-        hitSound.muted = !hitSound.muted;
-        starSound.muted = !starSound.muted;
-
-        console.log("muted")
-    }
-
-    function encreaseFontSize() {
-        if(fontSize < 40) {
-            fontSize += 5;
-            optionsWrapper.style.fontSize = fontSize + "px";
-        }
-    }
-
-    function decreaseFontSize() {
-        if(fontSize > 20) {
-            fontSize -= 5;
-            optionsWrapper.style.fontSize = fontSize + "px";
-        }
-    }
-
     window.addEventListener("keydown", keyDownHandler);
     window.addEventListener("keyup", keyUpHandler);
     pauseButton.addEventListener("click", pauseGame);
-    muteButton.addEventListener("click", muteGame);
-    fontSizeUpButton.addEventListener("click", encreaseFontSize);
-    fontSizeDownButton.addEventListener("click", decreaseFontSize);
 
     let date = new Date(0);
     let secondsCounter = 0; 
@@ -337,9 +335,6 @@ function startGame() {
             window.removeEventListener("keydown", keyDownHandler);
             window.removeEventListener("keyup", keyUpHandler);
             pauseButton.removeEventListener("click", pauseGame);
-            muteButton.removeEventListener("click", muteGame);
-            fontSizeUpButton.removeEventListener("click", encreaseFontSize);
-            fontSizeDownButton.removeEventListener("click", decreaseFontSize);
 
             KEYS.a.pressed = false;
             KEYS.w.pressed = false;
